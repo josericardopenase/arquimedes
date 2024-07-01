@@ -16,8 +16,11 @@ interface BodyProperties {
 
 type Force = (properties : BodyProperties) => {x: number, y: number}
 const g = -9800;
-const k = 1200
+const k = 1200;
 
+
+class Rigidbody{
+}
 
 const sketch = (p: p5) => {
 
