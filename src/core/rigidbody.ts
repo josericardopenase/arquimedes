@@ -21,15 +21,20 @@ export class Rigidbody{
         return new RigidbodyBuilder()
     }
 
+    public addForce(f : Force){
+        this.forces.push(f)
+    }
+
+    public clearForces(){
+        this.forces = []
+    }
+
     public next(dt : number){
         this.forces.forEach(f => {
             const calculation = f.apply(this)
-            console.log(calculation)
             this.velocity.x += dt * (calculation.x/this.mass.value)
             this.velocity.y += dt * (calculation.y/this.mass.value)
-            console.log(this.velocity)
-
-            this.position.x += dt*this.velocity.x 
+            this.position.x += dt*this.velocity.x
             this.position.y += dt*this.velocity.y 
 
         })
@@ -68,4 +73,6 @@ export class RigidbodyBuilder {
     build(): Rigidbody {
         return new Rigidbody(this.position, this.velocity, this.mass, this.charge);
     }
+
+
 }

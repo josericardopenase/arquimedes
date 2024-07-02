@@ -3,26 +3,27 @@ import "./style.css"
 import { Rigidbody } from "./core/rigidbody";
 import { Ether } from "./core/ether";
 import { Vector2D } from "./core/utils/vector";
+import {ForceBuilder} from "./core/force.ts";
 
 
 class P5Ether implements Ether {
     private rb: Rigidbody[] = [];
-    private p5Instance: p5 | null = null;
+    private p5Instance;
     private isRunning: boolean = false;
 
     constructor() {
         this.start = this.start.bind(this);
-        this.stop = this.stop.bind(this);
         this.next = this.next.bind(this);
+        this.start()
     }
-    
+
 
     addRigidbody(rb: Rigidbody): void {
         this.rb.push(rb);
     }
 
     start(): void {
-        const sketch = (p: p5) => {
+        const sketch = (p) => {
             p.setup = () => {
                 p.createCanvas(p.windowWidth, p.windowHeight);
                 p.noLoop(); // Ensure draw() is not called continuously
@@ -30,6 +31,7 @@ class P5Ether implements Ether {
                 // Initialize any drawing settings here
                 p.background("#ffffff");
                 drawGrid(100); // Draw grid initially
+
             };
 
             p.draw = () => {
@@ -40,8 +42,38 @@ class P5Ether implements Ether {
                 this.rb.forEach(rb => {
                     p.fill(0, 0, 255);
                     p.rect(rb.position.x, rb.position.y, 50, 50);
+                    drawVector(rb.velocity, Vector2D.add(rb.position, new Vector2D(25, 25)) )
+                    rb.forces.forEach((x) => {
+                        const force = x.apply(rb)
+                        drawVector(Vector2D.scalarMultiply(1/10, force), Vector2D.add(rb.position, new Vector2D(25, 25)) )
+                    })
+                    drawVector(rb.velocity, Vector2D.add(rb.position, new Vector2D(25, 25)) )
                 });
             };
+
+            function drawVector(v: Vector2D, point: Vector2D): void {
+                p.push();
+                p.stroke(255, 0, 0); // Set the stroke color to red
+                p.strokeWeight(2);
+
+                p.fill(0, 255, 0); // Set the fill color to green for the point
+                p.ellipse(point.x, point.y, 5, 5); // Draw the point as a small circle
+
+
+                p.translate(point.x, point.y);
+                p.line(0, 0, v.x, v.y);
+
+                const arrowSize = 7;
+                p.push();
+                p.translate(v.x, v.y);
+                p.rotate(Math.atan2(v.y, v.x));
+                p.line(0, 0, -arrowSize, arrowSize / 2);
+                p.line(0, 0, -arrowSize, -arrowSize / 2);
+                p.pop();
+                p.pop();
+            }
+
+
 
             // Helper function to draw grid
             function drawGrid(distance: number) {
@@ -49,10 +81,8 @@ class P5Ether implements Ether {
                 p.fill(0);
                 p.textSize(12);
                 p.textAlign(p.CENTER, p.CENTER);
-
                 const offsetX = p.width / 2 % distance;
                 const offsetY = p.height / 2 % distance;
-
                 for (let x = offsetX; x < p.width; x += distance) {
                     p.line(x, 0, x, p.height);
                     p.text(Math.floor(x - p.width / 2).toString(), x, 10); // Draw x-coordinate numbers
@@ -68,61 +98,32 @@ class P5Ether implements Ether {
             };
         };
 
+
+
         // Initialize p5 instance with the sketch
         this.p5Instance = new p5(sketch);
         this.isRunning = true;
-        this.p5Instance.loop(); // Start p5 draw loop
-    }
-
-    stop(): void {
-        if (this.p5Instance) {
-            this.p5Instance.remove();
-            this.p5Instance = null;
-            this.isRunning = false;
-        }
     }
 
     next(): void {
-        if (!this.isRunning) {
-            console.error("Ether is not running. Call start() first.");
-            return;
-        }
-
-        const dt = 1 // Convert to seconds
-        console.log(dt)
-        
-        // Update rigidbodies
-        this.rb.forEach(rb => {
-            // Example force application (replace with actual physics calculations)
-            //const totalForce = { x: 0, y: 0 }; // Example: Zero forces for now
-            //const acceleration = { x: totalForce.x / rb.mass.value, y: totalForce.y / rb.mass.value };
-            rb.next(dt)
-        });
-
-        // Redraw canvas with updated positions
+        const dt = 0.2
+        this.rb.forEach(rb => rb.next(dt))
         this.p5Instance?.redraw();
     }
+
+    drawVector(v: Vector2D, p: Vector2D): void {
+    }
+
 }
 
 const ether = new P5Ether();
 
-const rb1 = Rigidbody.create().setPosition(0, 0).setMass(50).build();
-ether.addRigidbody(rb1);
-
-
-rb1.forces = [
-  {
-    apply: (rb) =>  new Vector2D(0, 9.8)
-  }
-]
-
+const rb1 = Rigidbody.create().setPosition(window.innerWidth/2, window.screenY/2).setMass(50).build();
+rb1.addForce(ForceBuilder.from((rb) => new Vector2D(0, 9.8*rb.mass.value)))
 
 ether.addRigidbody(rb1);
-
-// Start the ether (starts p5 sketch)
-ether.start();
-
+ether.drawVector(new Vector2D(1, 1), new Vector2D(1, 2))
 
 setInterval(() => {
     ether.next();
-}, 1000 / 60); // 30 frames per second (adjust as needed)
+}, 1000/30); // 30 frames per second (adjust as needed)
