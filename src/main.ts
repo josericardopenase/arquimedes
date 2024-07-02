@@ -119,11 +119,11 @@ class P5Ether implements Ether {
 const ether = new P5Ether();
 
 const rb1 = Rigidbody.create().setPosition(window.innerWidth/2, window.screenY/2).setMass(50).build();
-rb1.addForce(ForceBuilder.from((rb) => new Vector2D(0, 9.8*rb.mass.value)))
+rb1.addForce(ForceBuilder.from((rb) => new Vector2D(0, 20*(200- rb.position.y))))
 
 ether.addRigidbody(rb1);
 ether.drawVector(new Vector2D(1, 1), new Vector2D(1, 2))
 
 setInterval(() => {
     ether.next();
-}, 1000/30); // 30 frames per second (adjust as needed)
+}, 1000/60); // 30 frames per second (adjust as needed)
