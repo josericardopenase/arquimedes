@@ -1,10 +1,12 @@
-import { Rigidbody } from "./rigidbody";
-import {Vector2D} from "./utils/vector.ts";
+import { Particle } from "./particle.ts";
 
-export interface Ether{
-    addRigidbody(rb : Rigidbody) : void
-    next(): void
-    start(): void
+
+export interface CollisionDetector{
+  collisionEntered(p : Particle) : void;
 }
 
-
+export interface Ether {
+  addRigidbody(rb: Particle): void;
+  next(): void;
+  start(): void;
+}
