@@ -1,6 +1,6 @@
-import {Particle, } from "../physics/particle/particle.ts";
+import {Particle, } from "../physics";
 import Rigidbody from "../physics/rigidBody/rigidbody.ts";
-import {Vector2D} from "../math/vectors";
+import {Vector2D} from "../math";
 
 export default class Universe {
   private particles: Particle[] = [];
