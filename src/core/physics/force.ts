@@ -1,5 +1,5 @@
-import { Particle } from "./particle.ts";
-import { Vector2D } from "./utils/vector";
+import { Particle } from "./particle/particle.ts";
+import {Vector2D} from "../math/vectors/Vector2D.ts";
 
 export interface Force {
   apply(rb: Particle): Vector2D;
