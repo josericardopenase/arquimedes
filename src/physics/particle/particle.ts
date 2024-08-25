@@ -1,6 +1,6 @@
 import { Force } from "../force.ts";
 import { Scalar } from "../../utils/scalar.ts";
-import {CollisionDetector} from "../../ether.ts";
+import {CollisionDetector} from "../../collisions/interfaces.ts";
 import {Vector2D} from "../../math/vectors";
 import {Apparience} from "./apparience.ts";
 import {ParticleBuilder} from "./particleBuilder.ts";

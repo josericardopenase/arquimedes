@@ -1,7 +1,7 @@
 
 type CallbackFunction = (fixedDeltaTime: number) => void;
 
-export function setFixedDeltaTimeout(callback: CallbackFunction, fixedDeltaTime: number = 1 / 60): void {
+export default function setFixedDeltaTimeout(callback: CallbackFunction, fixedDeltaTime: number = 1 / 60): void {
     let lastTime = 0;
     let accumulator = 0;
 

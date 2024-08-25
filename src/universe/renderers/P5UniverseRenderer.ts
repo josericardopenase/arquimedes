@@ -4,7 +4,7 @@ import {Particle} from "../../physics/particle";
 import {Vector2D} from "../../math/vectors";
 import Universe from "../universe.ts";
 
-export class P5UniverseRenderer  implements UniverseRenderer{
+export default class P5UniverseRenderer  implements UniverseRenderer{
     private p5Instance: p5;
     private universe : Universe;
 
