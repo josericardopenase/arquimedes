@@ -1,7 +1,7 @@
 import {Constants} from "./constants.ts";
 import fixedDeltaTime from "./fixedDeltaTime.ts";
 
-export {
+exportt  {
     Constants,
     fixedDeltaTime
 }
