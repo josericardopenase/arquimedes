@@ -145,7 +145,3 @@ setFixedDeltaTimeout((dt) => {
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
-
-## Contact
-
-For any questions or inquiries, feel free to contact me at [your-email@example.com](mailto:your-email@example.com).
