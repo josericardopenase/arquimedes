@@ -3,6 +3,7 @@ import Two from "two.js";
 
 import { Group } from "two.js/src/group";
 import { Particle, Rigidbody} from "../../physics";
+import {Vector2D} from "../../math";
 
 export default class TwoJSUniverseRenderer implements UniverseRenderer {
     private two: Two
@@ -17,11 +18,6 @@ export default class TwoJSUniverseRenderer implements UniverseRenderer {
         this.drawGrid()
         this.addZoomSupport()
     }
-
-    drawRigidbody(rb: Rigidbody): void {
-        throw new Error("Methot not implemented.");
-    }
-
 
     private drawGrid(){
     }
