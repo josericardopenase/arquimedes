@@ -1,14 +1,14 @@
-import {Particle, } from "../physics";
-import Rigidbody from "../physics/rigidBody/rigidbody.ts";
-import {Vector2D} from "../math";
-import UniverseRenderer from "./universeRenderer";
+import {Particle, } from "../../physics/index.ts";
+import Rigidbody from "../../physics/rigidBody/rigidbody.ts";
+import {Vector2D} from "../../math/index.ts";
+import {IUniverseRenderer} from "./IUniverseRenderer.ts";
 
 export default class Universe {
   private particles: Particle[] = [];
   private rigidbodies : Rigidbody[] = [];
-  private renderer : UniverseRenderer;
+  private renderer : IUniverseRenderer;
 
-  constructor(renderer  : UniverseRenderer) {
+  constructor(renderer  : IUniverseRenderer) {
     this.next = this.next.bind(this);
     this.renderer = renderer
   }
@@ -48,6 +48,6 @@ export default class Universe {
       p.next(dt)
       this.renderer.drawParticle(p)
     });
-    this.renderer.render()
+    this.renderer.update()
   }
 }

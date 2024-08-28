@@ -4,10 +4,14 @@ import {ForceBuilder, Particle} from "./physics";
 import {Apparience} from "./physics/particle";
 import {defaultCollisionHandler} from "./collisions";
 import TwoJSUniverseRenderer from "./universe/renderers/TwoJSUniverseRenderer";
+import { DragPlugin } from "./universe/plugins/dragPlugin";
+import { ZoomPlugin } from "./universe/plugins/zoomPlugin";
 
+const dragPlugin = new DragPlugin()
+const zoomPlugin = new ZoomPlugin()
 const renderer = new TwoJSUniverseRenderer({
     container: document.getElementById("app") ?? document.body,
-    plugins : []
+    plugins : [dragPlugin, zoomPlugin]
 });
 const universe = new Universe(renderer);
 

@@ -1,15 +1,17 @@
-import UniverseRenderer from "../universeRenderer";
+import {IUniverseRenderer} from "../domain/IUniverseRenderer";
 import Two from "two.js";
-
 import { Group } from "two.js/src/group";
 import { Particle, Rigidbody} from "../../physics";
-import {Vector2D} from "../../math";
+import { Vector2D } from "../../math";
+import { IRendererController } from "./IRendererController";
+import { IRendererPlugin } from "./IRendererPlugin";
 
 interface Options{
     container?: HTMLElement,
+    plugins?: IRendererPlugin[]
 }
 
-export default class TwoJSUniverseRenderer implements UniverseRenderer {
+export default class TwoJSUniverseRenderer implements IUniverseRenderer, IRendererController {
     private two: Two
     private worldContainer: Group;
 
@@ -22,40 +24,39 @@ export default class TwoJSUniverseRenderer implements UniverseRenderer {
         }).appendTo(options?.container || document.body);
         this.worldContainer = this.two.scene;
         this.drawGrid()
-        this.addZoomSupport()
+
+        options?.plugins?.forEach(plugin => plugin.plug(this))
     }
+
+
 
     private drawGrid(){
     }
 
+    translate(x: number, y: number): void {
+        this.worldContainer.translation.x += x;
+        this.worldContainer.translation.y += y;
+        this.two.update();
+    }
 
-    private addZoomSupport() {
-        document.addEventListener('wheel', (e) => {
-            e.preventDefault();
+    scale(factor: number, origin: Vector2D): void {
+        const localPos = {
+            x: (origin.x - this.worldContainer.translation.x) / Number(this.worldContainer.scale),
+            y: (origin.y - this.worldContainer.translation.y) / Number(this.worldContainer.scale),
+        };
 
-            const scaleFactor = e.deltaY < 0 ? 1.1 : 0.9;
-            const mousePosition = { x: e.clientX, y: e.clientY };
+        this.worldContainer.scale = Number(this.worldContainer.scale) * factor;
 
-            const localPos = {
-                x: (mousePosition.x - this.worldContainer.translation.x) / Number(this.worldContainer.scale),
-                y: (mousePosition.y - this.worldContainer.translation.y) / Number(this.worldContainer.scale),
-            };
-
-            this.worldContainer.scale = Number(this.worldContainer.scale) * scaleFactor;
-
-            this.worldContainer.translation.x = mousePosition.x - (localPos.x * this.worldContainer.scale);
-            this.worldContainer.translation.y = mousePosition.y - (localPos.y * this.worldContainer.scale);
-
-            this.two.update();
-        });
-
+        this.worldContainer.translation.x = origin.x - (localPos.x * this.worldContainer.scale);
+        this.worldContainer.translation.y = origin.y - (localPos.y * this.worldContainer.scale);
+        this.two.update();
     }
 
     clear(): void {
         this.two.clear()
     }
 
-    render(): void {
+    update(): void {
         this.two.update()
     }
 
