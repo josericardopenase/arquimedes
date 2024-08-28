@@ -1,13 +1,16 @@
 import {Particle, } from "../physics";
 import Rigidbody from "../physics/rigidBody/rigidbody.ts";
 import {Vector2D} from "../math";
+import UniverseRenderer from "./universeRenderer";
 
 export default class Universe {
   private particles: Particle[] = [];
   private rigidbodies : Rigidbody[] = [];
+  private renderer : UniverseRenderer;
 
-  constructor() {
+  constructor(renderer  : UniverseRenderer) {
     this.next = this.next.bind(this);
+    this.renderer = renderer
   }
 
   addParticle(rb: Particle): void {
@@ -27,6 +30,7 @@ export default class Universe {
   }
 
   next(dt: number): void {
+    this.renderer.clear()
     this.particles.forEach((p1, i1) => {
       this.particles.forEach((p2, i2) => {
         if(i1 == i2) return;
@@ -37,6 +41,10 @@ export default class Universe {
       })
     });
     this.rigidbodies.forEach((rb) => rb.next(dt))
-    this.particles.forEach((rb) => rb.next(dt));
+    this.particles.forEach((p) => {
+      p.next(dt)
+      this.renderer.drawParticle(p)
+    });
+    this.renderer.render()
   }
 }

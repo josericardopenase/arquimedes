@@ -4,7 +4,7 @@ import {Vector2D} from "../../math/vectors/Vector2D.ts";
 
 export default class Rigidbody {
     private particles: Particle[] = [];
-    private w: number = 300;
+    private w: number = 10;
     private originalDistances: number[] = []; // Add this line to define the array
 
     private constructor(particles: Particle[] = []) {
