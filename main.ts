@@ -9,13 +9,15 @@ import { ZoomPlugin } from "./universe/plugins/zoomPlugin";
 
 const dragPlugin = new DragPlugin()
 const zoomPlugin = new ZoomPlugin()
-const plugins = [dragPlugin, zoomPlugin]
-const renderer = new TwoJSUniverseRenderer(plugins);
+const renderer = new TwoJSUniverseRenderer({
+    container: document.getElementById("app") ?? document.body,
+    plugins : [dragPlugin, zoomPlugin]
+});
 const universe = new Universe(renderer);
 
 const p1 = Particle.create()
     .setMass(5)
-    .setPosition(window.innerWidth / 2, window.innerHeight / 2)
+    .setPosition(0, 0)
     .setVelocity(0, 0)
     .setCharge(0)
     .setApparience(
@@ -30,7 +32,7 @@ const p2 = Particle.create()
     .setMass(5)
     .setVelocity(0, 0)
     .setCharge(0)
-    .setPosition(window.innerWidth / 2, window.innerHeight / 2 + 300)
+    .setPosition(0, 300)
     .setApparience(
         Apparience.create()
             .setHeight(50)

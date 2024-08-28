@@ -6,28 +6,29 @@ import { Vector2D } from "../../math";
 import { IRendererController } from "./IRendererController";
 import { IRendererPlugin } from "./IRendererPlugin";
 
+interface Options{
+    container?: HTMLElement,
+    plugins?: IRendererPlugin[]
+}
+
 export default class TwoJSUniverseRenderer implements IUniverseRenderer, IRendererController {
     private two: Two
     private worldContainer: Group;
 
-    constructor(plugins: IRendererPlugin[]) {
-        var params = {
-            fullscreen: true
-        };
-        this.two = new Two(params).appendTo(document.body);
+    constructor(options ?: Options) {
+        this.two = new Two({
+            type: Two.Types.webgl,
+            fullscreen: !options?.container,
+            height: options?.container?.offsetHeight ?? document.body.offsetHeight,
+            width: options?.container?.offsetWidth ?? document.body.offsetWidth,
+        }).appendTo(options?.container || document.body);
         this.worldContainer = this.two.scene;
         this.drawGrid()
 
-        plugins.forEach(plugin => plugin.plug(this))
+        options?.plugins?.forEach(plugin => plugin.plug(this))
     }
 
-    drawVector(p1: Vector2D, p2: Vector2D): void {
-        throw new Error("Method not implemented.");
-    }
 
-    drawRigidbody(rb: Rigidbody): void {
-        throw new Error("Methot not implemented.");
-    }
 
     private drawGrid(){
     }
@@ -57,6 +58,14 @@ export default class TwoJSUniverseRenderer implements IUniverseRenderer, IRender
 
     update(): void {
         this.two.update()
+    }
+
+    drawRigidbody(rb: Rigidbody): void {
+        rb.getParticles().forEach(this.drawParticle)
+    }
+
+    drawVector(initialPosition: Vector2D, finalPosition: Vector2D){
+        this.two.makeArrow(initialPosition.x, initialPosition.y, finalPosition.x, finalPosition.y, 8)
     }
 
     drawParticle(p: Particle) {
