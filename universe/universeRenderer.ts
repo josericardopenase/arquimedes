@@ -1,3 +1,8 @@
+import {Particle, Rigidbody} from "../physics";
+
 export default interface UniverseRenderer{
-    render: (dt : number) => void
+    drawParticle(p :  Particle) : void
+    drawRigidbody(rb :  Rigidbody) : void
+    clear() : void
+    render() : void
 }
