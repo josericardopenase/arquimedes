@@ -2,6 +2,7 @@ import UniverseRenderer from "../universeRenderer";
 import Two from "two.js";
 import { Group } from "two.js/src/group";
 import { Particle, Rigidbody} from "../../physics";
+import { Vector2D } from "../../math";
 
 export default class TwoJSUniverseRenderer implements UniverseRenderer {
     private two: Two
@@ -20,6 +21,9 @@ export default class TwoJSUniverseRenderer implements UniverseRenderer {
         document.body.addEventListener("mousedown", this.handleDragStart.bind(this));
         document.body.addEventListener("mousemove", this.handleDrag.bind(this));
         document.body.addEventListener("mouseup", () => this.isDragging = false);
+    }
+    drawVector(p1: Vector2D, p2: Vector2D): void {
+        throw new Error("Method not implemented.");
     }
 
     drawRigidbody(rb: Rigidbody): void {
