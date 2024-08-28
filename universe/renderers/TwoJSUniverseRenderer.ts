@@ -55,6 +55,7 @@ export default class TwoJSUniverseRenderer implements UniverseRenderer {
 
     render(): void {
         this.two.update()
+    }
 
     drawRigidbody(rb: Rigidbody): void {
         rb.getParticles().forEach(this.drawParticle)
