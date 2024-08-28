@@ -40,7 +40,10 @@ export default class Universe {
         }
       })
     });
-    this.rigidbodies.forEach((rb) => rb.next(dt))
+    this.rigidbodies.forEach((rb) => {
+      rb.next(dt)
+      this.renderer.drawRigidbody(rb)
+    })
     this.particles.forEach((p) => {
       p.next(dt)
       this.renderer.drawParticle(p)
