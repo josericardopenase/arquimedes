@@ -1,5 +1,6 @@
 import UniverseRenderer from "../universeRenderer";
 import Two from "two.js";
+
 import { Group } from "two.js/src/group";
 import { Particle, Rigidbody} from "../../physics";
 
@@ -21,8 +22,10 @@ export default class TwoJSUniverseRenderer implements UniverseRenderer {
         throw new Error("Methot not implemented.");
     }
 
+
     private drawGrid(){
     }
+
 
     private addZoomSupport() {
         document.addEventListener('wheel', (e) => {
@@ -43,6 +46,7 @@ export default class TwoJSUniverseRenderer implements UniverseRenderer {
 
             this.two.update();
         });
+
     }
 
     clear(): void {
@@ -51,6 +55,13 @@ export default class TwoJSUniverseRenderer implements UniverseRenderer {
 
     render(): void {
         this.two.update()
+
+    drawRigidbody(rb: Rigidbody): void {
+        rb.getParticles().forEach(this.drawParticle)
+    }
+
+    drawVector(initialPosition: Vector2D, finalPosition: Vector2D){
+        this.two.makeArrow(initialPosition.x, initialPosition.y, finalPosition.x, finalPosition.y, 8)
     }
 
     drawParticle(p: Particle) {
