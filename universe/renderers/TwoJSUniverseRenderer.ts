@@ -1,6 +1,7 @@
 import UniverseRenderer from "../universeRenderer";
 import Two from "two.js";
 import { Particle, Rigidbody} from "../../physics";
+import {Vector2D} from "../../math";
 
 export default class TwoJSUniverseRenderer implements UniverseRenderer {
     private two: Two
@@ -11,6 +12,7 @@ export default class TwoJSUniverseRenderer implements UniverseRenderer {
         };
         this.two = new Two(params).appendTo(document.body);
         this.drawGrid()
+        window.addEventListener("wheel", this.handleZoom)
     }
 
     drawRigidbody(rb: Rigidbody): void {
@@ -18,6 +20,12 @@ export default class TwoJSUniverseRenderer implements UniverseRenderer {
     }
 
     private drawGrid(){
+    }
+
+    private drawVector(initialPosition: Vector2D, finalPosition: Vector2D){
+    }
+
+    private handleZoom(e: WheelEvent){
     }
 
     clear(): void {
