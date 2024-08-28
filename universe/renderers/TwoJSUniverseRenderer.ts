@@ -1,27 +1,26 @@
-import UniverseRenderer from "../universeRenderer";
+import {IUniverseRenderer} from "../domain/IUniverseRenderer";
 import Two from "two.js";
 import { Group } from "two.js/src/group";
 import { Particle, Rigidbody} from "../../physics";
 import { Vector2D } from "../../math";
+import { IRendererController } from "./IRendererController";
+import { IRendererPlugin } from "./IRendererPlugin";
 
-export default class TwoJSUniverseRenderer implements UniverseRenderer {
+export default class TwoJSUniverseRenderer implements IUniverseRenderer, IRendererController {
     private two: Two
     private worldContainer: Group;
-    private previousMousePosition: { x: number; y: number; };
-    private isDragging: boolean = false;
 
-    constructor() {
+    constructor(plugins: IRendererPlugin[]) {
         var params = {
             fullscreen: true
         };
         this.two = new Two(params).appendTo(document.body);
         this.worldContainer = this.two.scene;
         this.drawGrid()
-        document.body.addEventListener("wheel", this.handleZoom.bind(this));
-        document.body.addEventListener("mousedown", this.handleDragStart.bind(this));
-        document.body.addEventListener("mousemove", this.handleDrag.bind(this));
-        document.body.addEventListener("mouseup", () => this.isDragging = false);
+
+        plugins.forEach(plugin => plugin.plug(this))
     }
+
     drawVector(p1: Vector2D, p2: Vector2D): void {
         throw new Error("Method not implemented.");
     }
@@ -33,45 +32,22 @@ export default class TwoJSUniverseRenderer implements UniverseRenderer {
     private drawGrid(){
     }
 
-    private handleZoom(e: WheelEvent) {
-        e.preventDefault();
-
-        const scaleFactor = e.deltaY < 0 ? 1.1 : 0.9;
-        const mousePosition = { x: e.clientX, y: e.clientY };
-
-        const localPos = {
-            x: (mousePosition.x - this.worldContainer.translation.x) / Number(this.worldContainer.scale),
-            y: (mousePosition.y - this.worldContainer.translation.y) / Number(this.worldContainer.scale),
-        };
-
-        this.worldContainer.scale = Number(this.worldContainer.scale) * scaleFactor;
-
-        this.worldContainer.translation.x = mousePosition.x - (localPos.x * this.worldContainer.scale);
-        this.worldContainer.translation.y = mousePosition.y - (localPos.y * this.worldContainer.scale);
-
+    translate(x: number, y: number): void {
+        this.worldContainer.translation.x += x;
+        this.worldContainer.translation.y += y;
         this.two.update();
     }
 
-    private handleDragStart(e: MouseEvent) {
-        const isPressed = e.buttons === 1;
-        this.isDragging = isPressed;
-        this.previousMousePosition = { x: e.clientX, y: e.clientY };
-    }
+    scale(factor: number, origin: Vector2D): void {
+        const localPos = {
+            x: (origin.x - this.worldContainer.translation.x) / Number(this.worldContainer.scale),
+            y: (origin.y - this.worldContainer.translation.y) / Number(this.worldContainer.scale),
+        };
 
-    private handleDrag(e: MouseEvent) {
-        e.preventDefault();
+        this.worldContainer.scale = Number(this.worldContainer.scale) * factor;
 
-        if (!this.isDragging) return;
-
-        const dx = e.clientX - this.previousMousePosition.x;
-        const dy = e.clientY - this.previousMousePosition.y;
-        
-
-        this.worldContainer.translation.x += dx;
-        this.worldContainer.translation.y += dy;
-
-        this.previousMousePosition = { x: e.clientX, y: e.clientY };
-
+        this.worldContainer.translation.x = origin.x - (localPos.x * this.worldContainer.scale);
+        this.worldContainer.translation.y = origin.y - (localPos.y * this.worldContainer.scale);
         this.two.update();
     }
 
@@ -79,7 +55,7 @@ export default class TwoJSUniverseRenderer implements UniverseRenderer {
         this.two.clear()
     }
 
-    render(): void {
+    update(): void {
         this.two.update()
     }
 

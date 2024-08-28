@@ -1,4 +1,4 @@
-import Universe from "./universe";
+import Universe from "./domain/universe";
 
 export {
     Universe
