@@ -5,15 +5,21 @@ import { Group } from "two.js/src/group";
 import { Particle, Rigidbody} from "../../physics";
 import {Vector2D} from "../../math";
 
+interface Options{
+    container?: HTMLElement,
+}
+
 export default class TwoJSUniverseRenderer implements UniverseRenderer {
     private two: Two
     private worldContainer: Group;
 
-    constructor() {
-        var params = {
-            fullscreen: true
-        };
-        this.two = new Two(params).appendTo(document.body);
+    constructor(options ?: Options) {
+        this.two = new Two({
+            type: Two.Types.webgl,
+            fullscreen: !options?.container,
+            height: options?.container?.offsetHeight ?? document.body.offsetHeight,
+            width: options?.container?.offsetWidth ?? document.body.offsetWidth,
+        }).appendTo(options?.container || document.body);
         this.worldContainer = this.two.scene;
         this.drawGrid()
         this.addZoomSupport()
