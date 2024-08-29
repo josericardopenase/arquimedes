@@ -2,21 +2,22 @@ import { Force } from "../force.ts";
 import { Scalar } from "../../utils/scalar.ts";
 import {CollisionDetector} from "../../collisions/interfaces.ts";
 import {Vector2D} from "../../math/vectors";
-import {Apparience} from "./apparience.ts";
+import {Appearance} from "./appearance.ts";
 import {ParticleBuilder} from "./particleBuilder.ts";
 import {ParticleMeshBuilder} from "./particleMeshBuilder.ts";
+import {Entity} from "../entity";
 
 type Behaviour = (rb: Particle) => void;
 type CollisionCallback = (p: Particle, p2: Particle) => void;
 
-export class Particle implements CollisionDetector{
+export class Particle extends Entity implements CollisionDetector{
   public position: Vector2D = new Vector2D(0, 0);
   public velocity: Vector2D = new Vector2D(0, 0);
   public forces: Force[] = [];
   public mass: Scalar = new Scalar(0);
   public charge: Scalar = new Scalar(0);
   public behaviours: Behaviour[];
-  public apparience: Apparience = Apparience.default();
+  public appearance: Appearance = Appearance.default();
   public collisionCallbacks : CollisionCallback[] = [];
   public nextVelocity : Vector2D | null = null;
 
@@ -25,15 +26,16 @@ export class Particle implements CollisionDetector{
     velocity: Vector2D,
     mass: Scalar,
     charge: Scalar,
-    apparience: Apparience,
+    apparience: Appearance,
   ) {
+    super();
     this.position = position;
     this.velocity = velocity;
     this.forces = [];
     this.mass = mass;
     this.charge = charge;
     this.behaviours = [];
-    this.apparience = apparience;
+    this.appearance = apparience;
     this.collisionCallbacks = []
   }
 
