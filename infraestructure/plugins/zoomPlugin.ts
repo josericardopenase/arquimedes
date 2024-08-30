@@ -24,6 +24,6 @@ export class ZoomPlugin implements IRendererPlugin {
     }
 
     private getScaleFactor(event: WheelEvent) {
-        return event.deltaY < 0 ? 1.1 : 0.9;
+        return event.deltaY < 0 ? 1.001 : 0.98;
     }
 }
