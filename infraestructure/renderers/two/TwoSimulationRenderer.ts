@@ -51,7 +51,7 @@ export default class TwoSimulationRenderer
     position = Vector2D.scalarMultiply(scaleFactor, position)
     const width = 1/(this.worldContainer.scale as number)  * this.two.width
     const height = 1/(this.worldContainer.scale as number)  * this.two.height
-    const offset = ((width)/gridSize)
+    const offset = ((width)/(gridSize*scaleFactor))
 
     const axisY =  this.two.makeLine(width/2, -position.y, width/2, -position.y + height)
     axisY.linewidth=3 * scaleFactor
@@ -71,7 +71,7 @@ export default class TwoSimulationRenderer
         line
       )
     }
-    for (let y = -position.y+position.y % offset; y <= -position.y+width; y += ((height)/gridSize)) {
+    for (let y = -position.y+position.y % offset; y <= -position.y+width; y += ((height)/(gridSize*scaleFactor))) {
       const line = this.two.makeLine(-position.x, y, -position.x + width, y )
       line.linewidth=1 * scaleFactor
       this.lines.push(
