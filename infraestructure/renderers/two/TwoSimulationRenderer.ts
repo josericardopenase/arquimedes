@@ -7,6 +7,7 @@ import {IRendererController} from "../IRendererController";
 import {Options, TwoFactory} from "./TwoFactory";
 import {TwoCacheDrawer } from "./TwoCacheDrawer";
 import { Path } from "two.js/src/path";
+import { SCALE_MODES } from "pixi.js";
 
 
 export default class TwoSimulationRenderer
@@ -46,15 +47,35 @@ export default class TwoSimulationRenderer
     this.lines.push(
       this.two.makeLine(this.two.width/2, -position.y, this.two.width/2, -position.y + this.two.height)
     )*/
+    const scaleFactor=1/(this.worldContainer.scale as number)
+    position = Vector2D.scalarMultiply(scaleFactor, position)
+    const width = 1/(this.worldContainer.scale as number)  * this.two.width
+    const height = 1/(this.worldContainer.scale as number)  * this.two.height
+    const offset = ((width)/gridSize)
 
-    for (let x = -position.x; x <= -position.x+this.two.width; x += ((this.two.width)/gridSize)) {
+    const axisY =  this.two.makeLine(width/2, -position.y, width/2, -position.y + height)
+    axisY.linewidth=3 * scaleFactor
+    this.lines.push(
+      axisY
+    )
+    const axisX = this.two.makeLine(-position.x, height/2, -position.x + width, height/2 )
+    axisX.linewidth=3 * scaleFactor
+    this.lines.push(
+      axisX
+    )
+    
+    for (let x = -position.x+position.x % offset; x <= -position.x+width; x += offset) {
+      const line =  this.two.makeLine(x, -position.y, x, -position.y + height)
+      line.linewidth=1 * scaleFactor
       this.lines.push(
-        this.two.makeLine(x, -position.y, x, -position.y + this.two.height)
+        line
       )
     }
-    for (let y = -position.y; y <= -position.y+this.two.width; y += ((this.two.height)/gridSize)) {
+    for (let y = -position.y+position.y % offset; y <= -position.y+width; y += ((height)/gridSize)) {
+      const line = this.two.makeLine(-position.x, y, -position.x + width, y )
+      line.linewidth=1 * scaleFactor
       this.lines.push(
-        this.two.makeLine(-position.x, y, -position.x + this.two.width, y )
+        line
       )
     }
 
