@@ -5,9 +5,9 @@ import {Vector2D} from "../../../math";
 import { Path } from "two.js/src/path";
 
 
-export class getElementFromCache implements IUniverseRenderer {
+export class TwoCacheUniverseRenderer implements IUniverseRenderer {
     private two: Two;
-    private cache : Record<string, Path>
+    private readonly cache : Record<string, Path>
 
     constructor(two: Two) {
         this.two = two

@@ -5,19 +5,19 @@ import {Particle, Rigidbody} from "../../../physics";
 import {Vector2D} from "../../../math";
 import {IRendererController} from "../IRendererController";
 import {Options, TwoFactory} from "./TwoFactory";
-import {getElementFromCache} from "./GetElementFromCache";
+import {TwoCacheUniverseRenderer} from "./TwoCacheUniverseRenderer";
 
 
 export default class TwoJSUniverseRenderer
   implements IUniverseRenderer, IRendererController
 {
   private two: Two;
-  private drawer : getElementFromCache
+  private drawer : TwoCacheUniverseRenderer
   private worldContainer: Group;
 
   constructor(options?: Options) {
     this.two = TwoFactory.fromOptions(options);
-    this.drawer = new getElementFromCache(this.two)
+    this.drawer = new TwoCacheUniverseRenderer(this.two)
     this.worldContainer = this.two.scene;
     options?.plugins?.forEach((plugin) => plugin.plug(this));
   }
