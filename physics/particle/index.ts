@@ -1,7 +1,7 @@
 import {Particle} from "./particle.ts";
-import {Apparience} from "./apparience.ts";
+import {Appearance} from "./appearance.ts";
 
 export {
     Particle,
-    Apparience
+    Appearance
 }

@@ -1,13 +1,15 @@
-import { Particle } from "../particle/particle.ts";
-import {Vector3D} from "../../math/vectors/Vector3D.ts";
-import {Vector2D} from "../../math/vectors/Vector2D.ts";
+import { Particle } from "../particle";
+import {Vector3D} from "../../math";
+import {Vector2D} from "../../math";
+import {Entity} from "../entity";
 
-export default class Rigidbody {
+export default class Rigidbody extends Entity {
     private particles: Particle[] = [];
     private w: number = 10;
     private originalDistances: number[] = []; // Add this line to define the array
 
     private constructor(particles: Particle[] = []) {
+        super();
         this.particles = particles;
         this.updateOriginalDistances(); // Calculate original distances
     }

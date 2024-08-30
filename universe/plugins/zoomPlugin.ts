@@ -5,23 +5,25 @@ import { IRendererPlugin } from "../renderers/IRendererPlugin";
 export class ZoomPlugin implements IRendererPlugin {
     public id = "zoom";
     private active: boolean = true;
-    private renderer: IRendererController;
+    private renderer!: IRendererController;
 
     plug(renderer: IRendererController): void {
         this.renderer = renderer;
         document.body.addEventListener("wheel", this.onMouseWheel.bind(this));
     }
 
-    onMouseDown(event: MouseEvent): void {}
-    onMouseMove(event: MouseEvent): void {}
-    onMouseUp(event: MouseEvent): void {}
-
     onMouseWheel(event: WheelEvent): void {
         if (!this.active) return;
-
-        const scaleFactor = event.deltaY < 0 ? 1.1 : 0.9;
-        const mousePosition = new Vector2D(event.clientX, event.clientY);
-
+        const scaleFactor = this.getScaleFactor(event);
+        const mousePosition = this.getMousePosition(event);
         this.renderer.scale(scaleFactor, mousePosition);
+    }
+
+    private getMousePosition(event: WheelEvent) {
+        return new Vector2D(event.clientX, event.clientY);
+    }
+
+    private getScaleFactor(event: WheelEvent) {
+        return event.deltaY < 0 ? 1.1 : 0.9;
     }
 }

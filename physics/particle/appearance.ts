@@ -1,17 +1,17 @@
-import {ApparienceBuilder} from "./apparienceBuilder.ts";
+import {AppearanceBuilder} from "./appearanceBuilder.ts";
 
-export class Apparience {
+export class Appearance {
     public width: number = 0;
     public height: number = 0;
     public shape: "Circle" | "Box" | "Particle" = "Circle";
     public color: string = "#f5f5f5";
 
-    public static default(): Apparience {
-        return new Apparience();
+    public static default(): Appearance {
+        return new Appearance();
     }
 
     public static create() {
-        return new ApparienceBuilder();
+        return new AppearanceBuilder();
     }
 }
 

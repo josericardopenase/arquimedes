@@ -1,9 +1,9 @@
 import {Universe} from "./universe";
 import setFixedDeltaTimeout from "./utils/fixedDeltaTime";
 import {ForceBuilder, Particle} from "./physics";
-import {Apparience} from "./physics/particle";
+import {Appearance} from "./physics/particle";
 import {defaultCollisionHandler} from "./collisions";
-import TwoJSUniverseRenderer from "./universe/renderers/TwoJSUniverseRenderer";
+import TwoJSUniverseRenderer from "./universe/renderers/two/TwoJSUniverseRenderer";
 import { DragPlugin } from "./universe/plugins/dragPlugin";
 import { ZoomPlugin } from "./universe/plugins/zoomPlugin";
 
@@ -21,7 +21,7 @@ const p1 = Particle.create()
     .setVelocity(0, 0)
     .setCharge(0)
     .setApparience(
-        Apparience.create()
+        Appearance.create()
             .setHeight(50)
             .setWidth(50)
             .setColor("green")
@@ -34,7 +34,7 @@ const p2 = Particle.create()
     .setCharge(0)
     .setPosition(0, 300)
     .setApparience(
-        Apparience.create()
+        Appearance.create()
             .setHeight(50)
             .setWidth(50)
             .setColor("green")

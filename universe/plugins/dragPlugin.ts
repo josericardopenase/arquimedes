@@ -7,7 +7,7 @@ export class DragPlugin implements IRendererPlugin {
     private isDragging: boolean = false;
     private active: boolean = true;
     private previousMousePosition: { x: number; y: number; } = { x: 0, y: 0 };
-    private renderer: IRendererController;
+    private renderer!: IRendererController;
 
     plug(renderer: IRendererController): void {
         this.renderer = renderer;
@@ -16,27 +16,33 @@ export class DragPlugin implements IRendererPlugin {
         document.body.addEventListener("mouseup", this.onMouseUp.bind(this));
     }
     
-    onMouseWheel(event: WheelEvent): void {}
 
     onMouseDown(event: MouseEvent): void {
         if (!this.active) return;
-        if (event.buttons === 1) {
-            this.isDragging = true;
-            this.previousMousePosition = { x: event.clientX, y: event.clientY };
-        }
+        if (event.buttons !== 1) return;
+        this.isDragging = true;
+        this.savePreviousMousePosition(event)
     }
 
     onMouseMove(event: MouseEvent): void {
         if (!this.active || !this.isDragging) return;
-
-        const dx = event.clientX - this.previousMousePosition.x;
-        const dy = event.clientY - this.previousMousePosition.y;
-
+        const {dx, dy} = this.computeDisplacement(event)
         this.renderer.translate(dx, dy);
-        this.previousMousePosition = { x: event.clientX, y: event.clientY };
+        this.savePreviousMousePosition(event);
     }
 
-    onMouseUp(event: MouseEvent): void {
+    private savePreviousMousePosition(event: MouseEvent) {
+        this.previousMousePosition = {x: event.clientX, y: event.clientY};
+    }
+
+    private computeDisplacement(event: MouseEvent) {
+        return {
+            dx: event.clientX - this.previousMousePosition.x,
+            dy: event.clientY - this.previousMousePosition.y
+        };
+    }
+
+    onMouseUp(): void {
         this.isDragging = false;
     }
 }
