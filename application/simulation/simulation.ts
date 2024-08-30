@@ -1,14 +1,14 @@
-import { Particle } from "../../physics";
-import Rigidbody from "../../physics/rigidBody/rigidbody.ts";
-import { Vector2D } from "../../math";
-import { IUniverseRenderer } from "./IUniverseRenderer.ts";
+import { Particle } from "../../domain";
+import Rigidbody from "../../domain/rigidBody/rigidbody.ts";
+import { Vector2D } from "../../domain/math";
+import { ISimulationRenderer } from "./ISimulationRenderer.ts";
 
-export default class Universe {
+export default class Simulation {
   private particles: Particle[] = [];
   private rigidbodies: Rigidbody[] = [];
-  private renderer: IUniverseRenderer;
+  private renderer: ISimulationRenderer;
 
-  constructor(renderer: IUniverseRenderer) {
+  constructor(renderer: ISimulationRenderer) {
     this.renderer = renderer;
   }
 
@@ -20,7 +20,7 @@ export default class Universe {
     this.rigidbodies.push(rb);
   }
 
-  next(dt: number): void {
+  simulate(dt: number): void {
     this.particles.forEach(this.handleCollisions());
     this.rigidbodies.forEach(this.renderRigidbody(dt));
     this.particles.forEach(this.renderParticle(dt));

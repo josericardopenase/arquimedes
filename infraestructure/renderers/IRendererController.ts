@@ -1,4 +1,4 @@
-import {Vector2D } from "../../math";
+import {Vector2D } from "../../domain/math";
 
 export interface IRendererController{
     translate(x: number, y: number): void;

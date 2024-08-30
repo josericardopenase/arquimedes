@@ -1,26 +1,26 @@
-import {Universe} from "./universe";
-import setFixedDeltaTimeout from "./utils/fixedDeltaTime";
-import {ForceBuilder, Particle} from "./physics";
-import {Appearance} from "./physics/particle";
-import {defaultCollisionHandler} from "./collisions";
-import TwoJSUniverseRenderer from "./universe/renderers/two/TwoJSUniverseRenderer";
-import { DragPlugin } from "./universe/plugins/dragPlugin";
-import { ZoomPlugin } from "./universe/plugins/zoomPlugin";
+import {Simulation} from "./infraestructure";
+import setFixedDeltaTimeout from "./shared/fixedDeltaTime";
+import {ForceBuilder, Particle} from "./domain";
+import {Appearance} from "./domain/particle";
+import {defaultCollisionHandler} from "./domain/collisions";
+import TwoSimulationRenderer from "./infraestructure/renderers/two/TwoSimulationRenderer";
+import { DragPlugin } from "./infraestructure/plugins/dragPlugin";
+import { ZoomPlugin } from "./infraestructure/plugins/zoomPlugin";
 
 const dragPlugin = new DragPlugin()
 const zoomPlugin = new ZoomPlugin()
-const renderer = new TwoJSUniverseRenderer({
+const renderer = new TwoSimulationRenderer({
     container: document.getElementById("app") ?? document.body,
     plugins : [dragPlugin, zoomPlugin]
 });
-const universe = new Universe(renderer);
+const universe = new Simulation(renderer);
 
 const p1 = Particle.create()
     .setMass(5)
     .setPosition(0, 0)
     .setVelocity(0, 0)
     .setCharge(0)
-    .setApparience(
+    .setAppearance(
         Appearance.create()
             .setHeight(50)
             .setWidth(50)
@@ -33,7 +33,7 @@ const p2 = Particle.create()
     .setVelocity(0, 0)
     .setCharge(0)
     .setPosition(0, 300)
-    .setApparience(
+    .setAppearance(
         Appearance.create()
             .setHeight(50)
             .setWidth(50)
@@ -44,12 +44,12 @@ const p2 = Particle.create()
 universe.addParticle(p1)
 universe.addParticle(p2)
 
-p1.addForce(ForceBuilder.y((rb) => rb.mass.value*908))
+p1.addForce(ForceBuilder.y((rb) => rb.mass*98))
 
 p1.onCollision(defaultCollisionHandler)
 p2.onCollision(defaultCollisionHandler)
 
 
 setFixedDeltaTimeout((dt) => {
-    universe.next(dt)
+    universe.simulate(dt)
 }, 1 / 220);

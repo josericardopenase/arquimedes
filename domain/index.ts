@@ -1,4 +1,4 @@
-import { ForceBuilder } from "./force";
+import { ForceBuilder } from "./forces/force";
 import { Particle } from "./particle";
 import Rigidbody from "./rigidBody/rigidbody";
 

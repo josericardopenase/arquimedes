@@ -1,7 +1,7 @@
-import { Particle, Rigidbody } from "../../physics";
-import { Vector2D } from "../../math";
+import { Particle, Rigidbody } from "../../domain";
+import { Vector2D } from "../../domain/math";
 
-export interface IUniverseRenderer {
+export interface ISimulationRenderer {
   update(): void;
   drawParticle(p: Particle): void;
   drawRigidbody(rb: Rigidbody): void;

@@ -1,4 +1,4 @@
-import { Vector2D } from "../../math";
+import { Vector2D } from "../../domain/math";
 import { IRendererController } from "../renderers/IRendererController";
 import { IRendererPlugin } from "../renderers/IRendererPlugin";
 

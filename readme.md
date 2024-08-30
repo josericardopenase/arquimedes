@@ -55,10 +55,10 @@ The first step is to create a universe, which is the container for all particles
 
 ```javascript
 import { Universe } from "arquimedes";
-import { P5UniverseRenderer } from "arquimedes/universe/renderers";
-import setFixedDeltaTimeout from "arquimedes/utils/fixedDeltaTime";
+import { P5UniverseRenderer } from "arquimedes/simulation/renderers";
+import setFixedDeltaTimeout from "arquimedes/shared/fixedDeltaTime";
 
-// Create a new universe
+// Create a new simulation
 const universe = new Universe();
 
 // Create a renderer using P5.js
@@ -77,14 +77,14 @@ setFixedDeltaTimeout((dt) => {
 Now you can create particles with specific properties like position, mass, and velocity, and then add them to the universe.
 
 ```javascript
-import { Particle, Apparience } from "arquimedes/physics";
+import {Particle, Apparience} from "arquimedes/domain";
 
 // Create a particle
 const particle1 = Particle.create()
     .setPosition(100, 100)          // Initial position (x, y) in pixels
     .setMass(2)                     // Mass of the particle in kilograms
     .setVelocity(50, 0)             // Initial velocity (vx, vy) in pixels per second
-    .setApparience(                 // Appearance of the particle
+    .setAppearance(                 // Appearance of the particle
         Apparience.create()
             .setWidth(50)           // Width of the particle in pixels
             .setHeight(50)          // Height of the particle in pixels
@@ -94,7 +94,7 @@ const particle1 = Particle.create()
     )
     .build();
 
-// Add the particle to the universe
+// Add the particle to the simulation
 universe.addParticle(particle1);
 ```
 
@@ -109,7 +109,7 @@ universe.addParticle(particle1);
 To apply a gravitational force to the particle, you multiply the gravitational acceleration (9.8 m/s²) by the particle's mass to get the force in newtons.
 
 ```javascript
-import { ForceBuilder } from "arquimedes/physics";
+import { ForceBuilder } from "arquimedes/domain";
 
 // Create a gravitational force (F = m * g)
 const gravity = ForceBuilder.y(p => p.mass.value * 9.8);

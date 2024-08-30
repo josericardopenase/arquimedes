@@ -1,4 +1,4 @@
-import { Particle } from "./particle/particle.ts";
+import { Particle } from "../particle/particle.ts";
 import {Vector2D} from "../math/vectors/Vector2D.ts";
 
 export interface Force {

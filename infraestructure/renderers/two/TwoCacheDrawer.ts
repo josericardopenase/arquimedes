@@ -1,11 +1,11 @@
-import {IUniverseRenderer} from "../../domain/IUniverseRenderer";
+import {ISimulationRenderer} from "../../../application/simulation/ISimulationRenderer";
 import Two from "two.js";
-import {Particle, Rigidbody} from "../../../physics";
-import {Vector2D} from "../../../math";
+import {Particle, Rigidbody} from "../../../domain";
+import {Vector2D} from "../../../domain/math";
 import { Path } from "two.js/src/path";
 
 
-export class TwoCacheUniverseRenderer implements IUniverseRenderer {
+export class TwoCacheDrawer implements ISimulationRenderer {
     private two: Two;
     private readonly cache : Record<string, Path>
 
