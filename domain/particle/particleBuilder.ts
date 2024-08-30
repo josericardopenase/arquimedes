@@ -1,16 +1,14 @@
-import {Vector2D} from "../../math/vectors/Vector2D.ts";
-import {Scalar} from "../../utils/scalar.ts";
-import {Apparience} from "./apparience.ts";
+import {Vector2D} from "../math";
+import {Appearance} from "./appearance.ts";
 import {Particle} from "./particle.ts";
 
 export class ParticleBuilder {
     private position: Vector2D = new Vector2D(0, 0);
     private velocity: Vector2D = new Vector2D(0, 0);
-    private mass: Scalar = new Scalar(0);
-    private charge: Scalar = new Scalar(0);
-    private apparience: Apparience = Apparience.default();
+    private mass: number = 0;
+    private charge: number = 0;
+    private appearance: Appearance = Appearance.default();
 
-    // Setters for each property
     setPosition(x: number, y: number): ParticleBuilder {
         this.position = new Vector2D(x, y);
         return this;
@@ -22,17 +20,17 @@ export class ParticleBuilder {
     }
 
     setMass(value: number): ParticleBuilder {
-        this.mass = new Scalar(value);
+        this.mass = value;
         return this;
     }
 
     setCharge(value: number): ParticleBuilder {
-        this.charge = new Scalar(value);
+        this.charge = value;
         return this;
     }
 
-    setApparience(apparience: Apparience): ParticleBuilder {
-        this.apparience = apparience;
+    setAppearance(appearance: Appearance): ParticleBuilder {
+        this.appearance = appearance;
         return this;
     }
 
@@ -43,7 +41,7 @@ export class ParticleBuilder {
             this.velocity,
             this.mass,
             this.charge,
-            this.apparience,
+            this.appearance,
         );
     }
 }

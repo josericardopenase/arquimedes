@@ -1,4 +1,4 @@
-import { Particle } from "../physics/particle/particle.ts";
+import { Particle } from "../particle/particle.ts";
 
 
 export interface CollisionDetector{

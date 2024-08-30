@@ -1,5 +1,5 @@
 import {Particle } from "./particle.ts";
-import {Vector2D} from "../../math/vectors/Vector2D.ts";
+import {Vector2D} from "../math/vectors/Vector2D.ts";
 import {ParticleBuilder} from "./particleBuilder.ts";
 
 export class ParticleMeshBuilder{

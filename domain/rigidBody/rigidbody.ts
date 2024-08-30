@@ -1,13 +1,15 @@
-import { Particle } from "../particle/particle.ts";
-import {Vector3D} from "../../math/vectors/Vector3D.ts";
-import {Vector2D} from "../../math/vectors/Vector2D.ts";
+import { Particle } from "../particle";
+import {Vector3D} from "../math";
+import {Vector2D} from "../math";
+import {Entity} from "../shared/entity";
 
-export default class Rigidbody {
+export default class Rigidbody extends Entity {
     private particles: Particle[] = [];
     private w: number = 10;
     private originalDistances: number[] = []; // Add this line to define the array
 
     private constructor(particles: Particle[] = []) {
+        super();
         this.particles = particles;
         this.updateOriginalDistances(); // Calculate original distances
     }
@@ -31,17 +33,17 @@ export default class Rigidbody {
     }
 
     public getTotalMass() {
-        return this.particles.reduce((acc, curr) => acc + curr.mass.value, 0);
+        return this.particles.reduce((acc, curr) => acc + curr.mass, 0);
     }
 
     public getCenterOfMass() {
-        const xCordenate = this.particles.reduce((acc, curr) => acc + (curr.mass.value * curr.position.x), 0) / this.getTotalMass();
-        const yCordenate = this.particles.reduce((acc, curr) => acc + (curr.mass.value * curr.position.y), 0) / this.getTotalMass();
+        const xCordenate = this.particles.reduce((acc, curr) => acc + (curr.mass * curr.position.x), 0) / this.getTotalMass();
+        const yCordenate = this.particles.reduce((acc, curr) => acc + (curr.mass * curr.position.y), 0) / this.getTotalMass();
         return new Vector2D(xCordenate, yCordenate);
     }
 
     public getMomentOfInertia(axis: Vector2D = new Vector2D(0, 0)) {
-        return this.particles.reduce((acc, curr) => acc + (((curr.position.x - axis.x) ** 2 + (curr.position.y - axis.y) ** 2) * curr.mass.value), 0);
+        return this.particles.reduce((acc, curr) => acc + (((curr.position.x - axis.x) ** 2 + (curr.position.y - axis.y) ** 2) * curr.mass), 0);
     }
 
     public getKineticEnergy() {
@@ -49,7 +51,7 @@ export default class Rigidbody {
     }
 
     public getMomentOfInertiaRespectMassCenter() {
-        return this.particles.reduce((acc, curr) => acc + (((curr.position.x - this.getCenterOfMass().x) ** 2 + (curr.position.y - this.getCenterOfMass().y) ** 2) * curr.mass.value), 0);
+        return this.particles.reduce((acc, curr) => acc + (((curr.position.x - this.getCenterOfMass().x) ** 2 + (curr.position.y - this.getCenterOfMass().y) ** 2) * curr.mass), 0);
     }
 
     public next(dt: number) {
