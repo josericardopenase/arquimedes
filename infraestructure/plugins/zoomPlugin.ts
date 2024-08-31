@@ -9,11 +9,12 @@ export class ZoomPlugin implements IRendererPlugin {
 
     plug(renderer: IRendererController): void {
         this.renderer = renderer;
-        document.body.addEventListener("wheel", this.onMouseWheel.bind(this));
+        renderer.getContainer().addEventListener("wheel", this.onMouseWheel.bind(this));
     }
 
     onMouseWheel(event: WheelEvent): void {
         if (!this.active) return;
+        event.preventDefault();
         const scaleFactor = this.getScaleFactor(event);
         const mousePosition = this.getMousePosition(event);
         this.renderer.scale(scaleFactor, mousePosition);
@@ -24,6 +25,6 @@ export class ZoomPlugin implements IRendererPlugin {
     }
 
     private getScaleFactor(event: WheelEvent) {
-        return event.deltaY < 0 ? 1.001 : 0.98;
+        return event.deltaY < 0 ? 1.01 : 0.98;
     }
 }

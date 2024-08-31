@@ -11,14 +11,15 @@ export class DragPlugin implements IRendererPlugin {
 
     plug(renderer: IRendererController): void {
         this.renderer = renderer;
-        document.body.addEventListener("mousedown", this.onMouseDown.bind(this));
-        document.body.addEventListener("mousemove", this.onMouseMove.bind(this));
-        document.body.addEventListener("mouseup", this.onMouseUp.bind(this));
+        renderer.getContainer().addEventListener("mousedown", this.onMouseDown.bind(this));
+        renderer.getContainer().addEventListener("mousemove", this.onMouseMove.bind(this));
+        renderer.getContainer().addEventListener("mouseup", this.onMouseUp.bind(this));
     }
     
 
     onMouseDown(event: MouseEvent): void {
         if (!this.active) return;
+        event.preventDefault();
         if (event.buttons !== 1) return;
         this.isDragging = true;
         this.savePreviousMousePosition(event)
@@ -26,6 +27,7 @@ export class DragPlugin implements IRendererPlugin {
 
     onMouseMove(event: MouseEvent): void {
         if (!this.active || !this.isDragging) return;
+        event.preventDefault();
         const {dx, dy} = this.computeDisplacement(event)
         this.renderer.translate(dx, dy);
         this.savePreviousMousePosition(event);

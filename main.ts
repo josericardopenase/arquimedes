@@ -10,7 +10,6 @@ import { ZoomPlugin } from "./infraestructure/plugins/zoomPlugin";
 const dragPlugin = new DragPlugin()
 const zoomPlugin = new ZoomPlugin()
 const renderer = new TwoSimulationRenderer({
-    container: document.getElementById("app") ?? document.body,
     plugins : [dragPlugin, zoomPlugin]
 });
 const universe = new Simulation(renderer);
