@@ -1,27 +1,33 @@
-import { IRendererController } from "../renderers/IRendererController";
 import { IRendererPlugin } from "../renderers/IRendererPlugin";
 import { Vector2D } from "../../domain/math";
-import { IRendererDrawer } from "../renderers/IRendererDrawer";
 import { EventEmitter } from "../../shared/EventEmitter";
+import { ICanvas } from "../renderers/ICanvas";
+
+interface options {
+    graduation: boolean;
+}
 
 export class GridPlugin implements IRendererPlugin {
     public id = "grid";
-    private renderer!: IRendererController;
-    private drawer!: IRendererDrawer;
+    private canvas!: ICanvas;
+
     private zoomCounter = 0;
     private readonly MAX_ZOOM = 30;
     private readonly linesMinOffsetProportion = 70;
     private readonly linesMaxOffsetProportion = 50;
     private lines: string[] = [];
-    private eventEmitter: EventEmitter;
 
-    plug(renderer: IRendererController, drawer: IRendererDrawer, eventEmitter: EventEmitter): void {
-        this.renderer = renderer;
-        this.drawer = drawer;
-        this.eventEmitter = eventEmitter;
-        this.drawGrid(this.renderer.getPosition(), this.renderer.getScaleFactor());
-        this.eventEmitter.on("zoom", () => this.drawGrid(this.renderer.getPosition(), this.renderer.getScaleFactor()));
-        this.eventEmitter.on("translate", () => this.drawGrid(this.renderer.getPosition(), this.renderer.getScaleFactor()));
+    private graduation: boolean = true
+
+    constructor(options?: options) {
+        if(options?.graduation) this.graduation = options.graduation;
+    }
+
+    plug(renderer: ICanvas): void {
+        this.canvas = renderer;
+        this.drawGrid(this.canvas.getPosition(), this.canvas.getScaleFactor());
+        EventEmitter.getEventBus().on("zoom", () => this.drawGrid(this.canvas.getPosition(), this.canvas.getScaleFactor()));
+        EventEmitter.getEventBus().on("translate", () => this.drawGrid(this.canvas.getPosition(), this.canvas.getScaleFactor()));
     }
 
     adjustZoomCounter(factor: number): void {
@@ -29,59 +35,70 @@ export class GridPlugin implements IRendererPlugin {
     }
 
     drawGrid(position: Vector2D, scale: number): void {
-        console.log("drawGrid", position, scale);
         this.removeLines();
 
         const scaleFactor = 1 / scale;
-        const { clientWidth: width, clientHeight: height } = this.renderer.getContainer();
+        const { clientWidth: width, clientHeight: height } = this.canvas.getContainer();
         const scaledPosition = Vector2D.scalarMultiply(-scaleFactor, position);
         const scr = Vector2D.scalarMultiply(scaleFactor, new Vector2D(width, height));
         const scaledScreen = { width: scr.x, height: scr.y };
-        const side = (this.linesMinOffsetProportion + 
-                      (this.linesMaxOffsetProportion - this.linesMinOffsetProportion) * 
-                      (this.zoomCounter / this.MAX_ZOOM)) * scaleFactor;
+
+        const side = 100;
 
         this.drawLines(width, height, scaledPosition, scaledScreen, side, scaleFactor);
         this.drawAxes(width, height, scaledPosition, scaledScreen, scaleFactor);
-        this.drawer.update();
+        this.canvas.update();
     }
 
     private drawLines(width: number, height: number, scaledPosition: Vector2D, scaledScreen: { width: number, height: number }, side: number, scaleFactor: number): void {
-        // this.drawAxisLines(width, height, scaledPosition, scaledScreen, side, scaleFactor, true);
-        // this.drawAxisLines(width, height, scaledPosition, scaledScreen, side, scaleFactor, false);
+        this.drawAxisLines(width, height, scaledPosition, scaledScreen, side, scaleFactor, true);
+        this.drawAxisLines(width, height, scaledPosition, scaledScreen, side, scaleFactor, false);
     }
 
     private drawAxisLines(width: number, height: number, scaledPosition: Vector2D, scaledScreen: { width: number, height: number }, side: number, scaleFactor: number, isVertical: boolean): void {
-        const start = isVertical ? width / 2 : height / 2;
-        const end = isVertical ? scaledPosition.x + scaledScreen.width : scaledPosition.y + scaledScreen.height;
-        const step = isVertical ? side : -side;
+        for (let x = width/2; x <= scaledPosition.x + scaledScreen.width; x += side) {
+            if(x < scaledPosition.x) continue;
+            const start = new Vector2D(x, scaledPosition.y);
+            const end = new Vector2D(x, scaledPosition.y + scaledScreen.height);
+            const line = this.canvas.drawLine({ start, end, stroke: 1 * scaleFactor, color: "lightgray" });
+            this.lines.push(line);
+        }
 
-        for (let pos = start; (isVertical ? pos <= end : pos >= scaledPosition.y); pos += step) {
-            if ((isVertical && pos < scaledPosition.x) || (!isVertical && pos > end)) continue;
+        for (let x = width/2; x >= scaledPosition.x; x -= side) {
+            if(x > scaledPosition.x + scaledScreen.width) continue;
+            const start = new Vector2D(x, scaledPosition.y);
+            const end = new Vector2D(x, scaledPosition.y + scaledScreen.height);
+            const line = this.canvas.drawLine({ start, end, stroke: 1 * scaleFactor, color: "lightgray" });
+            this.lines.push(line);
+        }
 
-            const line = this.drawer.drawLine({
-                start: isVertical ? new Vector2D(pos, scaledPosition.y) : new Vector2D(scaledPosition.x, pos),
-                end: isVertical ? new Vector2D(pos, scaledPosition.y + scaledScreen.height) : new Vector2D(scaledPosition.x + scaledScreen.width, pos),
-                stroke: 1 * scaleFactor,
-                color: "lightgray"
-            });
+        for (let y = height/2; y <= scaledPosition.y + scaledScreen.height; y += side) {
+            if(y < scaledPosition.y) continue;
+            const start = new Vector2D(scaledPosition.x, y);
+            const end = new Vector2D(scaledPosition.x + scaledScreen.width, y);
+            const line = this.canvas.drawLine({ start, end, stroke: 1 * scaleFactor, color: "lightgray" });
+            this.lines.push(line);
+        }
 
+        for (let y = height/2; y >= scaledPosition.y; y -= side) {
+            if(y > scaledPosition.y + scaledScreen.height) continue;
+            const start = new Vector2D(scaledPosition.x, y);
+            const end = new Vector2D(scaledPosition.x + scaledScreen.width, y);
+            const line = this.canvas.drawLine({ start, end, stroke: 1 * scaleFactor, color: "lightgray" });
             this.lines.push(line);
         }
     }
 
     private drawAxes(width: number, height: number, scaledPosition: Vector2D, scaledScreen: { width: number, height: number }, scaleFactor: number): void {
-        const axisY = this.drawer.drawLine({
+        const axisY = this.canvas.drawLine({
             start: new Vector2D(width / 2, scaledPosition.y),
             end: new Vector2D(width / 2, scaledPosition.y + scaledScreen.height),
             stroke: 1 * scaleFactor,
             color: "black"
         });
 
-        console.log("startPlugin", new Vector2D(width / 2, scaledPosition.y));
-        console.log("endPlugin", new Vector2D(width / 2, scaledPosition.y + scaledScreen.height));
 
-        const axisX = this.drawer.drawLine({
+        const axisX = this.canvas.drawLine({
             start: new Vector2D(scaledPosition.x, height / 2),
             end: new Vector2D(scaledPosition.x + scaledScreen.width, height / 2),
             stroke: 1 * scaleFactor,
@@ -93,7 +110,7 @@ export class GridPlugin implements IRendererPlugin {
     }
 
     private removeLines(): void {
-        this.lines.forEach((line) => this.drawer.deleteElement(line));
+        this.lines.forEach((line) => this.canvas.deleteElement(line));
         this.lines = [];
     }
 }

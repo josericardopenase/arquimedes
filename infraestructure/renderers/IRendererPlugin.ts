@@ -1,7 +1,6 @@
 import { EventEmitter } from "../../shared/EventEmitter";
-import { IRendererController } from "./IRendererController";
-import { IRendererDrawer } from "./IRendererDrawer";
+import { ICanvas } from "./ICanvas";
 
 export interface IRendererPlugin {
-    plug(renderer: IRendererController, drawer: IRendererDrawer, eventEmitter: EventEmitter): void;
+    plug(canvas: ICanvas): void;
 }

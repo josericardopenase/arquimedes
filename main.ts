@@ -3,17 +3,17 @@ import setFixedDeltaTimeout from "./shared/fixedDeltaTime";
 import {ForceBuilder, Particle} from "./domain";
 import {Appearance} from "./domain/particle";
 import {defaultCollisionHandler} from "./domain/collisions";
-import TwoSimulationRenderer from "./infraestructure/renderers/two/TwoSimulationRenderer";
 import { DragPlugin } from "./infraestructure/plugins/dragPlugin";
 import { ZoomPlugin } from "./infraestructure/plugins/zoomPlugin";
 import { GridPlugin } from "./infraestructure/plugins/gridPlugin";
+import SimulationRenderer from "./infraestructure/renderers/SimulationRenderer";
+import { TwoCanvas } from "./infraestructure/renderers/two/TwoCanvas";
 
 const dragPlugin = new DragPlugin()
 const zoomPlugin = new ZoomPlugin()
 const gridPlugin = new GridPlugin()
-const renderer = new TwoSimulationRenderer({
-    plugins : [dragPlugin, zoomPlugin, gridPlugin]
-});
+const canvas = new TwoCanvas({})
+const renderer = new SimulationRenderer(canvas, [dragPlugin, zoomPlugin, gridPlugin])
 const universe = new Simulation(renderer);
 
 const p1 = Particle.create()

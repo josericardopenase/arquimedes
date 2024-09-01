@@ -1,21 +1,16 @@
 import { Vector2D } from "../../domain/math";
-import { IRendererController } from "../renderers/IRendererController";
-import { IRendererDrawer } from "../renderers/IRendererDrawer";
 import { IRendererPlugin } from "../renderers/IRendererPlugin";
 import { EventEmitter } from "../../shared/EventEmitter";
+import { ICanvas } from "../renderers/ICanvas";
 
 export class ZoomPlugin implements IRendererPlugin {
     public id = "zoom";
     private active: boolean = true;
-    private renderer!: IRendererController;
-    private drawer!: IRendererDrawer;
-    private eventEmitter!: EventEmitter;
+    private canvas: ICanvas;
     
-    plug(renderer: IRendererController, drawer: IRendererDrawer, eventEmitter: EventEmitter): void {
-        this.renderer = renderer;
-        this.drawer = drawer;
-        this.eventEmitter = eventEmitter;
-        renderer.getContainer().addEventListener("wheel", this.onMouseWheel.bind(this));
+    plug(canvas: ICanvas): void {
+        this.canvas = canvas;
+        canvas.getContainer().addEventListener("wheel", this.onMouseWheel.bind(this));
     }
 
     onMouseWheel(event: WheelEvent): void {
@@ -23,8 +18,8 @@ export class ZoomPlugin implements IRendererPlugin {
         event.preventDefault();
         const scaleFactor = this.getScaleFactor(event);
         const mousePosition = this.getMousePosition(event);
-        this.renderer.scale(scaleFactor, mousePosition);
-        this.eventEmitter.emit("zoom", event);
+        this.canvas.scale(scaleFactor, mousePosition);
+        EventEmitter.getEventBus().emit("zoom", event);
     }
 
     private getMousePosition(event: WheelEvent) {
@@ -32,6 +27,6 @@ export class ZoomPlugin implements IRendererPlugin {
     }
 
     private getScaleFactor(event: WheelEvent) {
-        return event.deltaY < 0 ? 1.05 : 0.95;
+        return event.deltaY < 0 ? 1.01 : 0.99;
     }
 }

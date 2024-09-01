@@ -3,6 +3,16 @@ type EventCallback = (event: Event) => void;
 export class EventEmitter {
     private events: Map<string, EventCallback[]> = new Map();
 
+    public static eventBus : EventEmitter
+
+    public static getEventBus(){
+        if(this.eventBus == null){
+            this.eventBus = new EventEmitter()
+            return this.eventBus
+        }
+        return this.eventBus
+    }
+
     on(event: string, callback: EventCallback) {
         if (!this.events.has(event)) {
             this.events.set(event, []);

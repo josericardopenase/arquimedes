@@ -3,7 +3,6 @@ import Two from "two.js";
 
 export interface Options {
     container?: HTMLElement;
-    plugins?: IRendererPlugin[];
 }
 
 export class TwoFactory{

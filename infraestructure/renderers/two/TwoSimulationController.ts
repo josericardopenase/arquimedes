@@ -1,11 +1,10 @@
 import { Group } from "two.js/src/group";
 import { Vector2D } from "../../../domain/math";
-import { IRendererController } from "../IRendererController";
 import Two from "two.js";
 import { Path } from "two.js/src/path";
+import { ICanvasController } from "../ICanvas";
 
-
-export class TwoSimulationController implements IRendererController{
+export class TwoCanvasController implements ICanvasController{
 
     private zoomCounter = 0;
     private MAX_ZOOM = 30;
