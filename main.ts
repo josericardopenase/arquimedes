@@ -18,7 +18,7 @@ const universe = new Simulation(renderer);
 
 const p1 = Particle.create()
     .setMass(5)
-    .setPosition(0, 0)
+    .setPosition(500, 0)
     .setVelocity(0, 0)
     .setCharge(0)
     .setAppearance(
@@ -33,7 +33,7 @@ const p2 = Particle.create()
     .setMass(5)
     .setVelocity(0, 0)
     .setCharge(0)
-    .setPosition(0, 300)
+    .setPosition(500, 300)
     .setAppearance(
         Appearance.create()
             .setHeight(50)

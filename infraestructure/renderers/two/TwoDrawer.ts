@@ -13,15 +13,13 @@ export class TwoDrawer implements ICanvasDrawer{
     constructor(two: Two) {
         this.two = two;
     }
-    drawText(params: { position: Vector2D; text: string; color?: string; id?: string; }): string {
+    drawText(params: { position: Vector2D; text: string; size: number; color?: string; id?: string; }): string {
         if(params?.id) this.deleteElementFromCache(params.id)
         const text = this.two.makeText(params.text, params.position.x, params.position.y)
+        text.linewidth = params.size
         this.addElementToCache(params.id ?? text.id, text)
         return params.id ?? text.id
     }
-
-    
-
 
     deleteElement(id: string) {
         this.deleteElementFromCache(id)

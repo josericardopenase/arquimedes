@@ -19,7 +19,11 @@ export class ZoomPlugin implements IRendererPlugin {
         const scaleFactor = this.getScaleFactor(event);
         const mousePosition = this.getMousePosition(event);
         this.canvas.scale(scaleFactor, mousePosition);
-        EventEmitter.getEventBus().emit("zoom", event);
+        if (scaleFactor > 1) {
+            EventEmitter.getEventBus().emit("zoomIn", event);
+        } else {
+            EventEmitter.getEventBus().emit("zoomOut", event);
+        }
     }
 
     private getMousePosition(event: WheelEvent) {

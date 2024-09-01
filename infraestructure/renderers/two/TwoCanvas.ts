@@ -15,7 +15,8 @@ export class TwoCanvas implements ICanvas{
         this.canvasDrawer = new TwoDrawer(this.two)
         this.canvasController = new TwoCanvasController(this.two)
     }
-    drawText(params: { position: Vector2D; text: string; color?: string; id?: string; }): string {
+    
+    drawText(params: { position: Vector2D; size: number, text: string; color?: string; id?: string; }): string {
         return this.canvasDrawer.drawText(params)
     }
 
