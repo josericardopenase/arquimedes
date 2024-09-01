@@ -1,4 +1,6 @@
+import { EventEmitter } from "../../shared/EventEmitter";
 import { IRendererController } from "../renderers/IRendererController";
+import { IRendererDrawer } from "../renderers/IRendererDrawer";
 import { IRendererPlugin } from "../renderers/IRendererPlugin";
 
 
@@ -8,9 +10,13 @@ export class DragPlugin implements IRendererPlugin {
     private active: boolean = true;
     private previousMousePosition: { x: number; y: number; } = { x: 0, y: 0 };
     private renderer!: IRendererController;
+    private drawer!: IRendererDrawer;
+    private eventEmitter: EventEmitter;
 
-    plug(renderer: IRendererController): void {
+    plug(renderer: IRendererController, drawer: IRendererDrawer, eventEmitter: EventEmitter): void {
         this.renderer = renderer;
+        this.drawer = drawer;
+        this.eventEmitter = eventEmitter
         renderer.getContainer().addEventListener("mousedown", this.onMouseDown.bind(this));
         renderer.getContainer().addEventListener("mousemove", this.onMouseMove.bind(this));
         renderer.getContainer().addEventListener("mouseup", this.onMouseUp.bind(this));
@@ -30,6 +36,7 @@ export class DragPlugin implements IRendererPlugin {
         event.preventDefault();
         const {dx, dy} = this.computeDisplacement(event)
         this.renderer.translate(dx, dy);
+        this.eventEmitter.emit("translate", event);
         this.savePreviousMousePosition(event);
     }
 

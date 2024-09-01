@@ -6,11 +6,13 @@ import {defaultCollisionHandler} from "./domain/collisions";
 import TwoSimulationRenderer from "./infraestructure/renderers/two/TwoSimulationRenderer";
 import { DragPlugin } from "./infraestructure/plugins/dragPlugin";
 import { ZoomPlugin } from "./infraestructure/plugins/zoomPlugin";
+import { GridPlugin } from "./infraestructure/plugins/gridPlugin";
 
 const dragPlugin = new DragPlugin()
 const zoomPlugin = new ZoomPlugin()
+const gridPlugin = new GridPlugin()
 const renderer = new TwoSimulationRenderer({
-    plugins : [dragPlugin, zoomPlugin]
+    plugins : [dragPlugin, zoomPlugin, gridPlugin]
 });
 const universe = new Simulation(renderer);
 

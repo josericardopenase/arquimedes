@@ -1,14 +1,20 @@
 import { Vector2D } from "../../domain/math";
 import { IRendererController } from "../renderers/IRendererController";
+import { IRendererDrawer } from "../renderers/IRendererDrawer";
 import { IRendererPlugin } from "../renderers/IRendererPlugin";
+import { EventEmitter } from "../../shared/EventEmitter";
 
 export class ZoomPlugin implements IRendererPlugin {
     public id = "zoom";
     private active: boolean = true;
     private renderer!: IRendererController;
-
-    plug(renderer: IRendererController): void {
+    private drawer!: IRendererDrawer;
+    private eventEmitter!: EventEmitter;
+    
+    plug(renderer: IRendererController, drawer: IRendererDrawer, eventEmitter: EventEmitter): void {
         this.renderer = renderer;
+        this.drawer = drawer;
+        this.eventEmitter = eventEmitter;
         renderer.getContainer().addEventListener("wheel", this.onMouseWheel.bind(this));
     }
 
@@ -18,6 +24,7 @@ export class ZoomPlugin implements IRendererPlugin {
         const scaleFactor = this.getScaleFactor(event);
         const mousePosition = this.getMousePosition(event);
         this.renderer.scale(scaleFactor, mousePosition);
+        this.eventEmitter.emit("zoom", event);
     }
 
     private getMousePosition(event: WheelEvent) {
@@ -25,6 +32,6 @@ export class ZoomPlugin implements IRendererPlugin {
     }
 
     private getScaleFactor(event: WheelEvent) {
-        return event.deltaY < 0 ? 1.01 : 0.98;
+        return event.deltaY < 0 ? 1.05 : 0.95;
     }
 }

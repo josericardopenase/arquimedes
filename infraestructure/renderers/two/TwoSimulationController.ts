@@ -7,11 +7,11 @@ import { Path } from "two.js/src/path";
 
 export class TwoSimulationController implements IRendererController{
 
+    private zoomCounter = 0;
+    private MAX_ZOOM = 30;
+    private lines: Path[] = [];
 
-    private htmlContainer: HTMLElement;
-    private lines : Path[] = []
-    private zoomCounter = 5;
-    private MAX_ZOOM = 5;
+
     private worldContainer : Group
 
     private callbacks : Record<"translate" | "scale", (() => void)[]> = {
@@ -26,10 +26,11 @@ export class TwoSimulationController implements IRendererController{
     
     
     getScaleFactor(): number {
-        throw this.worldContainer.scale;
+        return this.worldContainer.scale as number;
     }
+
     getPosition(): Vector2D {
-        throw new Vector2D(this.worldContainer.position["_x"], this.worldContainer.position["_y"]);
+        return new Vector2D(this.worldContainer.position["_x"], this.worldContainer.position["_y"]);
     }
 
     addTranslateCallback(callback: () => void): void {
@@ -40,15 +41,10 @@ export class TwoSimulationController implements IRendererController{
         this.callbacks["scale"].push(callback) 
     }
 
-    removeLines(): void {
-        this.two.remove(...this.lines);
-        this.lines = [];
-    }
-    
-    drawGrid(position: Vector2D, scale: number,  strokeColor: string = "#ddd", side : number): void {
+    drawGrid(position: Vector2D, scale: number,  strokeColor: string = "black", side : number): void {
 
 
-        const linesMinOffsetProportion = 100;
+        const linesMinOffsetProportion = 70;
         const linesMaxOffsetProportion = 50;
 
 
@@ -65,13 +61,13 @@ export class TwoSimulationController implements IRendererController{
             height: scr.y
         }
 
-        side = (linesMinOffsetProportion + (linesMaxOffsetProportion - linesMinOffsetProportion) * (this.zoomCounter / this.MAX_ZOOM)) * scaleFactor;
+        /*side = (linesMinOffsetProportion + (linesMaxOffsetProportion - linesMinOffsetProportion) * (this.zoomCounter / this.MAX_ZOOM)) * scaleFactor;
 
         for (let x = width/2; x <= scaledPosition.x + scaledScreen.width; x += side) {
             if(x < scaledPosition.x) continue;
             const line = this.two.makeLine(x, scaledPosition.y, x, scaledPosition.y + scaledScreen.height);
             line.linewidth = 1 * scaleFactor;
-            line.stroke ="gray"
+            line.stroke ="lightgray"
             this.lines.push(line);
         }
 
@@ -79,35 +75,40 @@ export class TwoSimulationController implements IRendererController{
             if(x > scaledPosition.x + scaledScreen.width) continue;
             const line = this.two.makeLine(x, scaledPosition.y, x, scaledPosition.y + scaledScreen.height);
             line.linewidth = 1 * scaleFactor;
-            line.stroke ="gray"
+            line.stroke ="lightgray"
             this.lines.push(line);
         }
 
         for (let y = height/2; y <= scaledPosition.y + scaledScreen.height; y += side) {
             if(y < scaledPosition.y) continue;
             const line = this.two.makeLine(scaledPosition.x, y, scaledPosition.x + scaledScreen.width, y);
-            line.linewidth = 1 * scaleFactor;
-            line.stroke ="gray"
+            line.linewidth *= scaleFactor;
+            line.stroke ="lightgray"
             this.lines.push(line);
         }
 
         for (let y = height/2; y >= scaledPosition.y; y -= side) {
             if(y > scaledPosition.y + scaledScreen.height) continue;
             const line = this.two.makeLine(scaledPosition.x, y, scaledPosition.x + scaledScreen.width, y);
-            line.linewidth = 1 * scaleFactor;
-            line.stroke ="gray"
+            line.linewidth *= scaleFactor;
+            line.stroke ="lightgray"
             this.lines.push(line);
         }
 
         const axisY = this.two.makeLine(width / 2, scaledPosition.y, width / 2, scaledPosition.y+scaledScreen.height);
-        axisY.linewidth = 2 * scaleFactor;
+        axisY.linewidth *= scaleFactor;
+        axisY.stroke = "black";
         this.lines.push(axisY);
 
         const axisX = this.two.makeLine(scaledPosition.x, height / 2, scaledPosition.x+scaledScreen.width, height / 2);
-        axisX.linewidth = 2 * scaleFactor;
+        axisX.linewidth *= scaleFactor;
+        axisX.stroke = "black";
         this.lines.push(axisX);
 
-        this.two.update();
+        this.two.update();*/
+
+        console.log("start", new Vector2D(width/2, scaledPosition.y))
+        console.log("end", new Vector2D(width/2, scaledPosition.y + scaledScreen.height))
     }
 
     translate(x: number, y: number): void {
@@ -128,6 +129,7 @@ export class TwoSimulationController implements IRendererController{
         this.worldContainer.translation.x = origin.x - localPosition.x * this.worldContainer.scale;
         this.worldContainer.translation.y = origin.y - localPosition.y * this.worldContainer.scale;
         this.zoomCounter += factor < 1 ? 1 : -1;
+
         if (this.zoomCounter > this.MAX_ZOOM) {
         this.zoomCounter = 0;
         } else if (this.zoomCounter < 0) {
@@ -135,7 +137,15 @@ export class TwoSimulationController implements IRendererController{
         }
         this.drawGridWithParams()
 
+
         this.callbacks["scale"].forEach(x => x())
+    }
+
+    private removeLines() {
+        this.lines.forEach(line => {
+            this.two.remove(line);
+        });
+        this.lines = [];
     }
 
     
