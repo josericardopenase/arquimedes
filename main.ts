@@ -11,7 +11,9 @@ import { TwoCanvas } from "./infraestructure/renderers/two/TwoCanvas";
 
 const dragPlugin = new DragPlugin()
 const zoomPlugin = new ZoomPlugin()
-const gridPlugin = new GridPlugin()
+const gridPlugin = new GridPlugin({
+    graduation: true,
+})
 const canvas = new TwoCanvas({})
 const renderer = new SimulationRenderer(canvas, [dragPlugin, zoomPlugin, gridPlugin])
 const universe = new Simulation(renderer);

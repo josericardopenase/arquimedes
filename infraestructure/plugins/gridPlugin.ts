@@ -5,6 +5,8 @@ import { ICanvas } from "../renderers/ICanvas";
 
 interface options {
     graduation: boolean;
+    proportions: { x: number, y: number };
+    color: string;
 }
 
 export class GridPlugin implements IRendererPlugin {
@@ -19,8 +21,8 @@ export class GridPlugin implements IRendererPlugin {
 
     private graduation: boolean = true
 
-    constructor(options?: options) {
-        if (options?.graduation) this.graduation = options.graduation;
+    constructor(options?: Partial<options>) {
+        if (options && options.graduation !== undefined) this.graduation = options.graduation;
     }
 
     plug(renderer: ICanvas): void {
@@ -76,14 +78,18 @@ export class GridPlugin implements IRendererPlugin {
     private drawVerticalLinesAndNumbers(width: number, height: number, scaledPosition: Vector2D, scaledScreen: { width: number, height: number }, side: number, scaleFactor: number): void {
         for (let x = width / 2; x <= scaledPosition.x + scaledScreen.width; x += side) {
             if (x >= scaledPosition.x) {
-                const value = Math.round((x - width / 2) * scaleFactor);
+                let value = (x - width / 2) * scaleFactor;
+                if (value > 1) value = Math.round(value);
+                else value = Math.round(value * 100000) / 100000;
                 this.drawLineAndNumber(new Vector2D(x, 0), scaledPosition, scaledScreen, scaleFactor, value, true);
             }
         }
 
         for (let x = width / 2; x >= scaledPosition.x; x -= side) {
             if (x <= scaledPosition.x + scaledScreen.width) {
-                const value = Math.round((x - width / 2) * scaleFactor);
+                let value = (x - width / 2) * scaleFactor;
+                if (value < -1) value = Math.round(value);
+                else value = Math.round(value * 100000) / 100000;
                 this.drawLineAndNumber(new Vector2D(x, 0), scaledPosition, scaledScreen, scaleFactor, value, true);
             }
         }
@@ -92,7 +98,9 @@ export class GridPlugin implements IRendererPlugin {
     private drawHorizontalLinesAndNumbers(width: number, height: number, scaledPosition: Vector2D, scaledScreen: { width: number, height: number }, side: number, scaleFactor: number): void {
         for (let y = height / 2; y <= scaledPosition.y + scaledScreen.height; y += side) {
             if (y >= scaledPosition.y) {
-                const value = Math.round((height / 2 - y) * scaleFactor);
+                let value = (height / 2 - y) * scaleFactor;
+                if (value < -1) value = Math.round(value);
+                else value = Math.round(value * 100000) / 100000;
                 this.drawLineAndNumber(new Vector2D(0, y), scaledPosition, scaledScreen, scaleFactor, value, false);
             }
         }
@@ -100,8 +108,8 @@ export class GridPlugin implements IRendererPlugin {
         for (let y = height / 2; y >= scaledPosition.y; y -= side) {
             if (y <= scaledPosition.y + scaledScreen.height) {
                 let value = (height / 2 - y) * scaleFactor
-                if (value > 0) value = Math.round(value);
-                else value = value;
+                if (value > 1) value = Math.round(value);
+                else value = Math.round(value * 100000) / 100000;
                 this.drawLineAndNumber(new Vector2D(0, y), scaledPosition, scaledScreen, scaleFactor, value, false);
             }
         }
@@ -122,7 +130,7 @@ export class GridPlugin implements IRendererPlugin {
     }
 
     private drawNumber(position: Vector2D, value: number, scaleFactor: number, isVertical: boolean): void {
-        const fontSize = 10000 * Math.pow(3, scaleFactor);
+        const fontSize = 12 * scaleFactor;
         const { clientWidth: width, clientHeight: height } = this.canvas.getContainer();
 
         const textPosition = isVertical 
